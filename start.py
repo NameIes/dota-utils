@@ -1,5 +1,5 @@
-from server import get_server
-from gui import GUI
+from core.server import get_server
+from core.gui import GUI
 import threading
 
 
