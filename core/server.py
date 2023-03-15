@@ -17,7 +17,7 @@ class DotaGSIServer(HTTPServer):
         super().__init__(*args, **kwargs)
 
 
-def get_server(server_class=DotaGSIServer, handler_class=DotaGSIRequestHandler, server_address=("", 1417)) -> HTTPServer:
+def get_server(server_class=DotaGSIServer, handler_class=DotaGSIRequestHandler, server_address=("", 1417)) -> DotaGSIServer:
     """Returns server instance with specified parameters.
 
     Args:
