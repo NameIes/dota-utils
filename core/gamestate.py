@@ -145,19 +145,34 @@ class GameState(metaclass=Singleton):
     player = Player()
     _on_update: Optional[Callable] = None
 
+    def __init__(self) -> None:
+        self.gamestates_with_data = [
+            'DOTA_GAMERULES_STATE_PRE_GAME',
+            'DOTA_GAMERULES_STATE_GAME_IN_PROGRESS'
+        ]
+
     def loads(self, data):
-        self.map.loads(data["map"])
+        try:
+            self.map.loads(data["map"])
 
-        player_data = {
-            "player": data["player"],
-            "hero": data["hero"],
-            "abilities": data["abilities"],
-            "items": data["items"],
-        }
-        self.player.loads(player_data)
+            if self.map.game_state not in self.gamestates_with_data:
+                return
 
-        if self._on_update is not None:
-            self._on_update(self)
+            player_data = {
+                "player": data["player"],
+                "hero": data["hero"],
+                "abilities": data["abilities"],
+                "items": data["items"],
+            }
+            self.player.loads(player_data)
+
+            if self._on_update is not None:
+                self._on_update(self)
+        except KeyError:
+            # Waiting for players to load
+            # Waiting for all players select hero
+            # Waiting for strategy time ends
+            pass
 
     def on_update(self, function: Callable):
         self._on_update = function
