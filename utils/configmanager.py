@@ -1,4 +1,4 @@
-import os, winreg, vdf, json
+import os, winreg, vdf, json, shutil
 from .singleton import Singleton
 
 
@@ -17,6 +17,7 @@ class ConfigManager(metaclass=Singleton):
     APP_MANIFEST_PATH = os.path.join("steamapps", f"appmanifest_{DOTA_APP_ID}.acf")
     DOTA_HOTKEYS_PATH = os.path.join(f"{DOTA_APP_ID}", "remote", "cfg", "dotakeys_personal.lst")
     APP_CONFIG_PATH = os.path.join(os.getcwd(), "config.json")
+    DOTA_CONFIG_PATH = os.path.join("steamapps", "common", "dota 2 beta", "game", "dota", "cfg", "gamestate_integration")
 
     def __init__(self) -> None:
         self.app_config = None
@@ -132,3 +133,16 @@ class ConfigManager(metaclass=Singleton):
             data (dict): dictionary with config.
         """
         self.app_config = data
+
+    def setup_gsiconfig(self):
+        """Copy gsi config file to dota config folder.
+        """
+        gsi_cfg_path = os.path.join(self.get_steam_lib_path(), self.DOTA_CONFIG_PATH)
+
+        if not os.path.exists(gsi_cfg_path):
+            os.makedirs(gsi_cfg_path)
+
+        gsi_cfg_path = os.path.join(gsi_cfg_path, 'gamestate_integration_dota2-gsi.cfg')
+        gsi_cfg_file = os.path.join(os.getcwd(), 'gamestate_integration_dota2-gsi.cfg')
+
+        shutil.copyfile(gsi_cfg_file, gsi_cfg_path)

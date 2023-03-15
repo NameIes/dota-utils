@@ -8,6 +8,7 @@ if __name__ == "__main__":
     # Initialize objects
     config_manager = ConfigManager()
     config_manager.load_config()
+    config_manager.setup_gsiconfig()
     server = get_server()
     gui = GUI()
 
