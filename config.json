@@ -1,1 +1,1 @@
-{"infowindow": {"pos": [13, 171], "close_hotkey": "del"}, "settingswindow": {"pos": [1096, 6], "hotkey": "f5"}}
+{"infowindow": {"pos": [21, 210], "close_hotkey": "del"}, "settingswindow": {"pos": [722, 250], "hotkey": "f5"}, "hooks": {"camera": {"installed_distance": 1407}}}
