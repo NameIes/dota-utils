@@ -2,13 +2,48 @@ import tkinter as tk
 import keyboard
 from utils import Singleton, ConfigManager
 from core.gamestate import GameState
+from core.hooks import HookManager
 
-
-class SettingsArea(tk.Canvas):
-    """Area with pagination buttons and page parameters.
+class SettingsArea(tk.Frame):
+    """Area with select page buttons and page parameters.
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.configure_widgets()
+        self.pack_widgets()
+
+        self.opened_hook = None
+        self.hook_manager = HookManager(self.parameters_frame)
+        self.place_hooks_buttons()
+
+    def configure_widgets(self) -> None:
+        self.btns_frame = tk.Frame(self, width=167, background="#2E333C")
+        self.parameters_frame = tk.Frame(self, width=626, background="#2E333C")
+
+    def pack_widgets(self) -> None:
+        self.btns_frame.pack(side='left', fill='y', padx=8, pady=8)
+        self.btns_frame.pack_propagate(False)
+
+        self.parameters_frame.pack(side='right', fill='y', padx=8, pady=8)
+        self.parameters_frame.pack_propagate(False)
+
+    def place_hooks_buttons(self):
+        hooknames = self.hook_manager.get_all_hook_names()
+        for hookname in hooknames:
+            btn = tk.Button(self.btns_frame, text=hookname, bg='#1B8DD1',
+                            fg='white', borderwidth=0, command=self.open_hook(hookname))
+            btn.pack(side='top', fill='x', pady=4)
+
+    def open_hook(self, hook_name: str):
+        hook = self.hook_manager.get_hook_by_name(hook_name)
+        def btn_open_hook():
+            if self.opened_hook is not None:
+                self.opened_hook.forget()
+            self.opened_hook = hook
+            self.opened_hook.pack(fill='both', expand=True)
+
+        return btn_open_hook
 
 
 class SettingsWindow(tk.Toplevel, metaclass=Singleton):
@@ -148,6 +183,8 @@ class InfoWindow(tk.Tk):
         Args:
             gamestate (GameState): object contains data about game.
         """
+        SettingsWindow(self).settings_area.hook_manager.on_update(gamestate)
+
         self.indicators['text'] = 'Health: {}\nGPM: {}\nXPM: {}'.format(
             gamestate.player.hero.health,
             gamestate.player.gpm,
